@@ -9,6 +9,9 @@ RUN wget -T 10 -O /opt/mongo-shake-${VERSION}.tar.gz https://github.com/alibaba/
     && cd mongo-shake \
     && mkdir conf \
     && cp collector.conf conf/
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && apk add --update bash \
+    && rm -rf /var/cache/apk/*
 WORKDIR /opt/mongo-shake
 VOLUME [ "/opt/mongo-shake/conf" ]
 CMD [ "./start.sh", "conf/collector.conf" ]
