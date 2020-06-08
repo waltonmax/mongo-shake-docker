@@ -1,7 +1,8 @@
-FROM alpine:latest
+FROM centos:latest
 ARG VERSION=v2.4.4
 ARG RELEASE_DATE=20200605
-RUN wget -T 10 -O /opt/mongo-shake-${VERSION}.tar.gz https://github.com/alibaba/MongoShake/releases/download/release-${VERSION}-${RELEASE_DATE}/mongo-shake-${VERSION}.tar.gz \
+RUN yum install -y wget \
+    && wget -T 10 -O /opt/mongo-shake-${VERSION}.tar.gz https://github.com/alibaba/MongoShake/releases/download/release-${VERSION}-${RELEASE_DATE}/mongo-shake-${VERSION}.tar.gz \
     && cd /opt \
     && tar xzvf mongo-shake-${VERSION}.tar.gz -C ./ \
     && mv mongo-shake-${VERSION} mongo-shake \
@@ -9,9 +10,6 @@ RUN wget -T 10 -O /opt/mongo-shake-${VERSION}.tar.gz https://github.com/alibaba/
     && cd mongo-shake \
     && mkdir conf \
     && cp collector.conf conf/
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
-    && apk add --update bash \
-    && rm -rf /var/cache/apk/*
 WORKDIR /opt/mongo-shake
 VOLUME [ "/opt/mongo-shake/conf" ]
-CMD [ "./start.sh", "conf/collector.conf" ]
+CMD [ "./collector.linux", "-conf=conf/collector.conf", "--verbose" ]
